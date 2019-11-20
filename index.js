@@ -35,6 +35,19 @@ let _req, _res;
 function loadJson(option, childDir) {
   let filename;
   return (req, res) => {
+    // 自定义错误码处理
+    if (req.method === "GET") {
+      statusCode = req.params.statusCode || req.query.statusCode;
+    } else if (req.method === "POST") {
+      statusCode = req.body.statusCode;
+    }
+    // 如果存在错误码配置则进行相应的处理
+    if(statusCode && statusCode != 200){
+      return res.status(statusCode).json({
+        status: 'error',
+        code: statusCode
+      });
+    }
     switch (Object.prototype.toString.call(option)) {
       case "[object String]":
         filename = option;
